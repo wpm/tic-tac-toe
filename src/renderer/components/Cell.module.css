@@ -1,0 +1,64 @@
+.cell {
+  width: 100px;
+  height: 100px;
+  font-size: 48px;
+  font-weight: bold;
+  border: 2px solid #2c3e50;
+  background-color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cell:disabled {
+  cursor: not-allowed;
+}
+
+.cell.playable:hover {
+  background-color: #ecf0f1;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.cell.x {
+  color: #3498db;
+  animation: placepiece 0.3s ease-out;
+}
+
+.cell.o {
+  color: #e74c3c;
+  animation: placepiece 0.3s ease-out;
+}
+
+.cell.winning {
+  background-color: #f39c12;
+  animation: winning 0.6s ease-in-out;
+}
+
+@keyframes placepiece {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes winning {
+  0%,
+  100% {
+    background-color: #f39c12;
+  }
+  50% {
+    background-color: #f1c40f;
+  }
+}

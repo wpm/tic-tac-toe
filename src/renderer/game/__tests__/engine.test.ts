@@ -11,6 +11,7 @@ import {
   isDraw,
   isValidMove,
   makeMove,
+  getWinningLine,
 } from '../engine';
 
 describe('Game Engine', () => {
@@ -304,6 +305,134 @@ describe('Game Engine', () => {
       } else {
         expect(getGameState(board4)).toBe('O');
       }
+    });
+  });
+
+  describe('getWinningLine', () => {
+    it('returns winning line for horizontal win in row 0', () => {
+      const board: Board = [
+        ['X', 'X', 'X'],
+        [null, null, null],
+        [null, null, null],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: 2 },
+      ]);
+    });
+
+    it('returns winning line for horizontal win in row 1', () => {
+      const board: Board = [
+        [null, null, null],
+        ['O', 'O', 'O'],
+        [null, null, null],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 1, col: 0 },
+        { row: 1, col: 1 },
+        { row: 1, col: 2 },
+      ]);
+    });
+
+    it('returns winning line for horizontal win in row 2', () => {
+      const board: Board = [
+        [null, null, null],
+        [null, null, null],
+        ['X', 'X', 'X'],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 2, col: 0 },
+        { row: 2, col: 1 },
+        { row: 2, col: 2 },
+      ]);
+    });
+
+    it('returns winning line for vertical win in column 0', () => {
+      const board: Board = [
+        ['X', null, null],
+        ['X', null, null],
+        ['X', null, null],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 0 },
+        { row: 1, col: 0 },
+        { row: 2, col: 0 },
+      ]);
+    });
+
+    it('returns winning line for vertical win in column 1', () => {
+      const board: Board = [
+        [null, 'O', null],
+        [null, 'O', null],
+        [null, 'O', null],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 1 },
+        { row: 1, col: 1 },
+        { row: 2, col: 1 },
+      ]);
+    });
+
+    it('returns winning line for vertical win in column 2', () => {
+      const board: Board = [
+        [null, null, 'X'],
+        [null, null, 'X'],
+        [null, null, 'X'],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 2 },
+        { row: 1, col: 2 },
+        { row: 2, col: 2 },
+      ]);
+    });
+
+    it('returns winning line for diagonal win from top-left to bottom-right', () => {
+      const board: Board = [
+        ['O', null, null],
+        [null, 'O', null],
+        [null, null, 'O'],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 0 },
+        { row: 1, col: 1 },
+        { row: 2, col: 2 },
+      ]);
+    });
+
+    it('returns winning line for diagonal win from top-right to bottom-left', () => {
+      const board: Board = [
+        [null, null, 'X'],
+        [null, 'X', null],
+        ['X', null, null],
+      ];
+      const winningLine = getWinningLine(board);
+      expect(winningLine).toEqual([
+        { row: 0, col: 2 },
+        { row: 1, col: 1 },
+        { row: 2, col: 0 },
+      ]);
+    });
+
+    it('returns null when there is no winner', () => {
+      const board: Board = [
+        ['X', 'O', 'X'],
+        ['X', 'X', 'O'],
+        ['O', 'X', 'O'],
+      ];
+      expect(getWinningLine(board)).toBeNull();
+    });
+
+    it('returns null for an empty board', () => {
+      const board = createEmptyBoard();
+      expect(getWinningLine(board)).toBeNull();
     });
   });
 });

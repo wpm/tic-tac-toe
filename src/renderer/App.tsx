@@ -7,12 +7,14 @@ import {
   selectWinner,
   selectCurrentPlayer,
   selectCanMove,
+  selectWinningLine,
   makeHumanMove,
   makeComputerMove,
   resetGame,
 } from './store/gameSlice';
 import Cell from './components/Cell';
 import type { Move } from './game/engine';
+import styles from './App.module.css';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +23,7 @@ function App() {
   const winner = useSelector(selectWinner);
   const currentPlayer = useSelector(selectCurrentPlayer);
   const canMove = useSelector(selectCanMove);
+  const winningLine = useSelector(selectWinningLine);
 
   // Automatically trigger computer move when it's the computer's turn
   useEffect(() => {
@@ -56,40 +59,22 @@ function App() {
     return `${currentPlayer}'s turn`;
   };
 
+  const isCellWinning = (row: number, col: number): boolean => {
+    if (!winningLine) return false;
+    return winningLine.some((pos) => pos.row === row && pos.col === col);
+  };
+
+  const isCellPlayable = (row: number, col: number): boolean => {
+    return canMove && board[row][col] === null && currentPlayer === 'X';
+  };
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        gap: '20px',
-      }}
-    >
-      <h1>Tic-Tac-Toe</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Tic-Tac-Toe</h1>
 
-      {/* Status Display */}
-      <div
-        style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          minHeight: '40px',
-        }}
-      >
-        {getStatusMessage()}
-      </div>
+      <div className={styles.status}>{getStatusMessage()}</div>
 
-      {/* Game Board */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 100px)',
-          gridTemplateRows: 'repeat(3, 100px)',
-          gap: '0',
-        }}
-      >
+      <div className={styles.board}>
         {board.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <Cell
@@ -97,26 +82,15 @@ function App() {
               value={cell}
               onClick={() => handleCellClick(rowIndex, colIndex)}
               disabled={!canMove || cell !== null || currentPlayer !== 'X'}
+              isWinning={isCellWinning(rowIndex, colIndex)}
+              isPlayable={isCellPlayable(rowIndex, colIndex)}
             />
           ))
         )}
       </div>
 
-      {/* Play Again Button */}
       {gameStatus !== 'playing' && (
-        <button
-          onClick={handleReset}
-          style={{
-            padding: '12px 24px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+        <button onClick={handleReset} className={styles.playagainbutton}>
           Play Again
         </button>
       )}
