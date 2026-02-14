@@ -1,5 +1,9 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'path';
+// Bug fix for issue #9: Use namespace import for CommonJS interop
+// When TypeScript compiles ES module imports to CommonJS, 'import path from "path"'
+// becomes 'path_1.default.join()' which fails because Node.js built-in modules
+// don't have a default export. Using 'import * as path' correctly generates 'path_1.join()'.
+import * as path from 'path';
 
 let mainWindow: BrowserWindow | null = null;
 
