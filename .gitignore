@@ -1,0 +1,29 @@
+.epik/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-renderer/
+dist-electron/
+out/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
