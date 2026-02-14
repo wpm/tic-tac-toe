@@ -8,6 +8,7 @@ import gameReducer, {
   selectWinner,
   selectCurrentPlayer,
   selectCanMove,
+  selectWinningLine,
 } from '../gameSlice';
 import type { GameSliceState } from '../gameSlice';
 import { createEmptyBoard } from '../../game/engine';
@@ -33,6 +34,11 @@ describe('gameSlice', () => {
       const state = gameReducer(undefined, { type: 'unknown' });
       expect(state.currentPlayer).toBe('X');
     });
+
+    it('should start with no winning line', () => {
+      const state = gameReducer(undefined, { type: 'unknown' });
+      expect(state.winningLine).toBe(null);
+    });
   });
 
   describe('makeHumanMove', () => {
@@ -42,6 +48,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 0, col: 0 }));
@@ -54,6 +61,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 0, col: 0 }));
@@ -68,6 +76,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 0, col: 0 }));
@@ -84,6 +93,7 @@ describe('gameSlice', () => {
         gameStatus: 'won',
         winner: 'X',
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 1, col: 1 }));
@@ -99,11 +109,17 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 0, col: 2 }));
       expect(state.gameStatus).toBe('won');
       expect(state.winner).toBe('X');
+      expect(state.winningLine).toEqual([
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: 2 },
+      ]);
     });
 
     it('should detect draw after human move', () => {
@@ -122,6 +138,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeHumanMove({ row: 2, col: 2 }));
@@ -139,6 +156,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'O',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeComputerMove());
@@ -155,6 +173,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'O',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeComputerMove());
@@ -172,12 +191,18 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'O',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeComputerMove());
       expect(state.gameStatus).toBe('won');
       expect(state.winner).toBe('O');
       expect(state.board[0][2]).toBe('O');
+      expect(state.winningLine).toEqual([
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: 2 },
+      ]);
     });
 
     it('should detect draw after computer move', () => {
@@ -197,6 +222,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'O',
+        winningLine: null,
       };
 
       const state = gameReducer(initialState, makeComputerMove());
@@ -215,6 +241,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       };
 
       const state = gameReducer(stateWithMoves, resetGame());
@@ -238,6 +265,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'O',
+        winningLine: null,
       });
       expect(selectBoard(state)).toEqual(board);
     });
@@ -248,6 +276,7 @@ describe('gameSlice', () => {
         gameStatus: 'won',
         winner: 'X',
         currentPlayer: 'X',
+        winningLine: null,
       });
       expect(selectGameStatus(state)).toBe('won');
     });
@@ -258,6 +287,7 @@ describe('gameSlice', () => {
         gameStatus: 'won',
         winner: 'O',
         currentPlayer: 'O',
+        winningLine: null,
       });
       expect(selectWinner(state)).toBe('O');
     });
@@ -268,6 +298,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       });
       expect(selectCurrentPlayer(state)).toBe('X');
     });
@@ -278,6 +309,7 @@ describe('gameSlice', () => {
         gameStatus: 'playing',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       });
       expect(selectCanMove(state)).toBe(true);
     });
@@ -288,6 +320,7 @@ describe('gameSlice', () => {
         gameStatus: 'won',
         winner: 'X',
         currentPlayer: 'X',
+        winningLine: null,
       });
       expect(selectCanMove(state)).toBe(false);
     });
@@ -298,8 +331,40 @@ describe('gameSlice', () => {
         gameStatus: 'draw',
         winner: null,
         currentPlayer: 'X',
+        winningLine: null,
       });
       expect(selectCanMove(state)).toBe(false);
+    });
+
+    it('selectWinningLine should return null when no winner', () => {
+      const state = mockRootState({
+        board: createEmptyBoard(),
+        gameStatus: 'playing',
+        winner: null,
+        currentPlayer: 'X',
+        winningLine: null,
+      });
+      expect(selectWinningLine(state)).toBe(null);
+    });
+
+    it('selectWinningLine should return winning line when game is won', () => {
+      const board = createEmptyBoard();
+      board[0][0] = 'X';
+      board[0][1] = 'X';
+      board[0][2] = 'X';
+      const winningLine = [
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: 2 },
+      ];
+      const state = mockRootState({
+        board,
+        gameStatus: 'won',
+        winner: 'X',
+        currentPlayer: 'X',
+        winningLine,
+      });
+      expect(selectWinningLine(state)).toEqual(winningLine);
     });
   });
 });

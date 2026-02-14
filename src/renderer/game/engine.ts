@@ -85,6 +85,61 @@ export function checkWinner(board: Board): Player | null {
 }
 
 /**
+ * Returns the positions of the three cells that form a winning line, or null if no winner.
+ */
+export function getWinningLine(board: Board): Move[] | null {
+  // Check rows
+  for (let row = 0; row < 3; row++) {
+    if (
+      board[row][0] !== null &&
+      board[row][0] === board[row][1] &&
+      board[row][1] === board[row][2]
+    ) {
+      return [
+        { row, col: 0 },
+        { row, col: 1 },
+        { row, col: 2 },
+      ];
+    }
+  }
+
+  // Check columns
+  for (let col = 0; col < 3; col++) {
+    if (
+      board[0][col] !== null &&
+      board[0][col] === board[1][col] &&
+      board[1][col] === board[2][col]
+    ) {
+      return [
+        { row: 0, col },
+        { row: 1, col },
+        { row: 2, col },
+      ];
+    }
+  }
+
+  // Check diagonal: top-left to bottom-right
+  if (board[0][0] !== null && board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+    return [
+      { row: 0, col: 0 },
+      { row: 1, col: 1 },
+      { row: 2, col: 2 },
+    ];
+  }
+
+  // Check diagonal: top-right to bottom-left
+  if (board[0][2] !== null && board[0][2] === board[1][1] && board[1][1] === board[2][0]) {
+    return [
+      { row: 0, col: 2 },
+      { row: 1, col: 1 },
+      { row: 2, col: 0 },
+    ];
+  }
+
+  return null;
+}
+
+/**
  * Checks if the game is a draw (board is full with no winner).
  */
 export function isDraw(board: Board): boolean {

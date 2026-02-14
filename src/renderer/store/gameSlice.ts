@@ -10,6 +10,7 @@ import {
   getGameState,
   checkWinner,
   getBestMove,
+  getWinningLine,
 } from '../game/engine';
 
 export type GameStatus = 'playing' | 'won' | 'draw';
@@ -19,6 +20,7 @@ export interface GameSliceState {
   gameStatus: GameStatus;
   winner: Player | null;
   currentPlayer: Player;
+  winningLine: Move[] | null;
 }
 
 const initialState: GameSliceState = {
@@ -26,6 +28,7 @@ const initialState: GameSliceState = {
   gameStatus: 'playing',
   winner: null,
   currentPlayer: 'X',
+  winningLine: null,
 };
 
 const gameSlice = createSlice({
@@ -49,6 +52,7 @@ const gameSlice = createSlice({
       if (gameState === 'X') {
         state.gameStatus = 'won';
         state.winner = 'X';
+        state.winningLine = getWinningLine(state.board);
       } else if (gameState === 'draw') {
         state.gameStatus = 'draw';
       } else {
@@ -72,6 +76,7 @@ const gameSlice = createSlice({
       if (gameState === 'O') {
         state.gameStatus = 'won';
         state.winner = 'O';
+        state.winningLine = getWinningLine(state.board);
       } else if (gameState === 'draw') {
         state.gameStatus = 'draw';
       } else {
@@ -94,5 +99,6 @@ export const selectGameStatus = (state: RootState) => state.game.gameStatus;
 export const selectWinner = (state: RootState) => state.game.winner;
 export const selectCurrentPlayer = (state: RootState) => state.game.currentPlayer;
 export const selectCanMove = (state: RootState) => state.game.gameStatus === 'playing';
+export const selectWinningLine = (state: RootState) => state.game.winningLine;
 
 export default gameSlice.reducer;
