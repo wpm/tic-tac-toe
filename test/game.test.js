@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newGame, humanMove } from "../src/game.js";
+import { newGame, humanMove, canMove } from "../src/game.js";
 import { emptyBoard } from "../src/board.js";
 import { boardOf } from "./helpers.js";
 
@@ -57,4 +57,12 @@ test("a final move that fills the board with no winner is a draw", () => {
   const state = { board: boardOf("XOXXOOOX."), status: "playing" };
   const next = humanMove(state, 8);
   assert.deepEqual(next, { board: boardOf("XOXXOOOXX"), status: "draw" });
+});
+
+test("canMove is true only for an empty cell while playing", () => {
+  const state = { board: boardOf("....X...O"), status: "playing" };
+  assert.equal(canMove(state, 0), true);
+  assert.equal(canMove(state, 4), false);
+  assert.equal(canMove(state, 9), false);
+  assert.equal(canMove({ board: boardOf("XXXOO...."), status: "human-wins" }, 5), false);
 });
