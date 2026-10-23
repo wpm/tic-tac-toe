@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { emptyBoard, place, legalMoves, winner, isFull, isGameOver } from "../src/board.js";
+import { boardOf } from "./helpers.js";
 
 test("emptyBoard has 9 null cells", () => {
   assert.deepEqual(emptyBoard(), Array(9).fill(null));
@@ -31,11 +32,6 @@ test("legalMoves lists only empty cells, ascending", () => {
   const board = place(place(place(emptyBoard(), 0, "X"), 4, "O"), 8, "X");
   assert.deepEqual(legalMoves(board), [1, 2, 3, 5, 6, 7]);
 });
-
-// Builds a board from 9 characters: X, O, or . for an empty cell.
-function boardOf(cells) {
-  return [...cells].map((c) => (c === "." ? null : c));
-}
 
 test("winner is null on an empty board", () => {
   assert.equal(winner(emptyBoard()), null);

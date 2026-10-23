@@ -2,11 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { bestMove } from "../src/minimax.js";
 import { emptyBoard, place, legalMoves, winner, isGameOver } from "../src/board.js";
-
-// Builds a board from 9 characters: X, O, or . for an empty cell.
-function boardOf(cells) {
-  return [...cells].map((c) => (c === "." ? null : c));
-}
+import { boardOf } from "./helpers.js";
 
 test("bestMove takes a winning move when one is available", () => {
   assert.equal(bestMove(boardOf("O.OX.X.X."), "O"), 1);
