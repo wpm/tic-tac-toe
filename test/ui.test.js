@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
 import { mount } from "../src/ui.js";
 import { newGame, humanMove } from "../src/game.js";
+import { legalMoves } from "../src/board.js";
 
 function mounted() {
   const { window } = new JSDOM("<div id='game'></div>");
@@ -73,7 +74,7 @@ test("a game played to the end shows its status and disables all cells", () => {
   let state = newGame();
   // Always take the lowest-index empty cell until the game ends.
   while (state.status === "playing") {
-    const index = state.board.indexOf(null);
+    const index = legalMoves(state.board)[0];
     state = humanMove(state, index);
     click(root, `[data-index="${index}"]`);
   }

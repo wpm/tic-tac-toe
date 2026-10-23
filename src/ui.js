@@ -1,4 +1,4 @@
-import { newGame, humanMove } from "./game.js";
+import { newGame, humanMove, canMove } from "./game.js";
 
 const MESSAGES = {
   playing: "Your move",
@@ -12,6 +12,11 @@ export function mount(root) {
   const doc = root.ownerDocument;
   let state = newGame();
 
+  function setState(next) {
+    state = next;
+    render();
+  }
+
   function element(tag, className, text) {
     const el = doc.createElement(tag);
     if (className) el.className = className;
@@ -24,19 +29,13 @@ export function mount(root) {
     state.board.forEach((mark, index) => {
       const cell = element("button", null, mark);
       cell.dataset.index = String(index);
-      cell.disabled = mark !== null || state.status !== "playing";
-      cell.addEventListener("click", () => {
-        state = humanMove(state, index);
-        render();
-      });
+      cell.disabled = !canMove(state, index);
+      cell.addEventListener("click", () => setState(humanMove(state, index)));
       board.append(cell);
     });
 
     const reset = element("button", "new-game", "New game");
-    reset.addEventListener("click", () => {
-      state = newGame();
-      render();
-    });
+    reset.addEventListener("click", () => setState(newGame()));
 
     root.replaceChildren(board, element("p", "status", MESSAGES[state.status]), reset);
   }
