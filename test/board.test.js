@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { emptyBoard, place } from "../src/board.js";
+import { emptyBoard, place, legalMoves } from "../src/board.js";
 
 test("emptyBoard has 9 null cells", () => {
   assert.deepEqual(emptyBoard(), Array(9).fill(null));
@@ -21,4 +21,13 @@ test("place throws on an occupied cell", () => {
 test("place throws on an out-of-range index", () => {
   assert.throws(() => place(emptyBoard(), 9, "X"));
   assert.throws(() => place(emptyBoard(), -1, "X"));
+});
+
+test("legalMoves lists every cell on an empty board", () => {
+  assert.deepEqual(legalMoves(emptyBoard()), [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+});
+
+test("legalMoves lists only empty cells, ascending", () => {
+  const board = place(place(place(emptyBoard(), 0, "X"), 4, "O"), 8, "X");
+  assert.deepEqual(legalMoves(board), [1, 2, 3, 5, 6, 7]);
 });

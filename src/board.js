@@ -13,3 +13,7 @@ export function place(board, index, mark) {
   next[index] = mark;
   return next;
 }
+
+export function legalMoves(board) {
+  return board.flatMap((cell, index) => (cell === null ? [index] : []));
+}
