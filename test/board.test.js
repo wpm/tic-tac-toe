@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { emptyBoard, place, legalMoves, winner } from "../src/board.js";
+import { emptyBoard, place, legalMoves, winner, isFull, isGameOver } from "../src/board.js";
 
 test("emptyBoard has 9 null cells", () => {
   assert.deepEqual(emptyBoard(), Array(9).fill(null));
@@ -59,4 +59,29 @@ test("winner finds the anti-diagonal", () => {
 
 test("winner is null on a full drawn board", () => {
   assert.equal(winner(boardOf("XOXXOOOXX")), null);
+});
+
+test("isFull is false while any cell is empty", () => {
+  assert.equal(isFull(emptyBoard()), false);
+  assert.equal(isFull(boardOf("XOXXOOOX.")), false);
+});
+
+test("isFull is true when every cell is marked", () => {
+  assert.equal(isFull(boardOf("XOXXOOOXX")), true);
+});
+
+test("isGameOver is false on an empty board", () => {
+  assert.equal(isGameOver(emptyBoard()), false);
+});
+
+test("isGameOver is false mid-game with no winner", () => {
+  assert.equal(isGameOver(boardOf("XO..X....")), false);
+});
+
+test("isGameOver is true when there is a winner", () => {
+  assert.equal(isGameOver(boardOf("XXXOO....")), true);
+});
+
+test("isGameOver is true on a full drawn board", () => {
+  assert.equal(isGameOver(boardOf("XOXXOOOXX")), true);
 });

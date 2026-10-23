@@ -38,3 +38,11 @@ export function winner(board) {
   }
   return null;
 }
+
+export function isFull(board) {
+  return !board.includes(null);
+}
+
+export function isGameOver(board) {
+  return winner(board) !== null || isFull(board);
+}
