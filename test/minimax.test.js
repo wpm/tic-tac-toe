@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { bestMove } from "../src/minimax.js";
+import { emptyBoard, place, legalMoves, winner, isGameOver } from "../src/board.js";
 
 // Builds a board from 9 characters: X, O, or . for an empty cell.
 function boardOf(cells) {
@@ -28,4 +29,25 @@ test("bestMove throws on a won board", () => {
 
 test("bestMove throws on a full drawn board", () => {
   assert.throws(() => bestMove(boardOf("XOXXOOOXX"), "X"));
+});
+
+test("O playing bestMove never loses against any sequence of X moves", () => {
+  let gamesPlayed = 0;
+  // X plays every legal move in turn; O always answers with bestMove.
+  function playOut(board) {
+    for (const index of legalMoves(board)) {
+      let next = place(board, index, "X");
+      if (!isGameOver(next)) {
+        next = place(next, bestMove(next, "O"), "O");
+      }
+      if (isGameOver(next)) {
+        assert.notEqual(winner(next), "X", `X won: ${next.map((c) => c ?? ".").join("")}`);
+        gamesPlayed++;
+      } else {
+        playOut(next);
+      }
+    }
+  }
+  playOut(emptyBoard());
+  assert.ok(gamesPlayed > 0);
 });
